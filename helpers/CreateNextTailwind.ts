@@ -35,13 +35,13 @@ async function createNextTailwindBoilerplate(
 		},
 	]);
 
-	if (authentication === "Hard-coded") {
-		setupPrisma(projectPath, orm, database, "hard-coded.prisma");
-	}
+	// if (authentication === "Hard-coded") {
+	// 	setupPrisma(projectPath, orm, database, "hard-coded.prisma");
+	// }
 
-	if (authentication === "NextAuth") {
-		setupPrisma(projectPath, orm, database, "next-auth.prisma");
-	}
+	// if (authentication === "NextAuth") {
+	// 	setupPrisma(projectPath, orm, database, "next-auth.prisma");
+	// }
 
 	if (installDeps) {
 		spinner.start("Installing dependencies...");
