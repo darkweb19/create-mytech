@@ -7,7 +7,6 @@ async function setupPrisma(
 	projectPath: string,
 	orm: string,
 	database: string,
-
 	prismasrcpath: string
 ) {
 	const spinner = ora();
@@ -29,6 +28,7 @@ async function setupPrisma(
 			"prisma",
 			"schema.prisma"
 		);
+
 		const packageJsonPath = path.join(projectPath, "package.json");
 
 		// Ensure the prisma directory exists and copy the schema file

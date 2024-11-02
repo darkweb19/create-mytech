@@ -6,6 +6,7 @@ import chalk from "chalk";
 import { execSync } from "child_process";
 import { ProjectOptions } from "../src";
 import { setupPrisma } from "./setupPrisma";
+import { PKG_ROOT } from "../consts";
 
 async function createNextTailwindBoilerplate(
 	projectPath: string,
@@ -14,15 +15,15 @@ async function createNextTailwindBoilerplate(
 	const { orm, database, authentication, frontendLanguage } = options;
 	const spinner = ora();
 
-	const templatePath = path.join("templates/next-tailwind");
+	// const templatePath = path.join("templates/next-tailwind");
 
-	await fs.ensureDir(templatePath);
+	// await fs.ensureDir(templatePath);
 
 	spinner.start(
 		"Setting up Next.js + Tailwind CSS project from template files..."
 	);
 
-	await fs.copy(templatePath, projectPath);
+	fs.copySync(path.join(PKG_ROOT, "templates/next-tailwind"), projectPath);
 	spinner.succeed(chalk.green("Template files copied."));
 
 	// Prompt for dependency installation
