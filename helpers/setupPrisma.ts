@@ -8,6 +8,7 @@ export interface PrismaOptions {
 	projectPath: string;
 	orm: "Prisma" | "Drizzle";
 	database: "PostgreSQL" | "MySQL";
+	authentication: "Hard-coded" | "NextAuth" | "Lucia Auth";
 	prismasrcpath: string;
 }
 
@@ -15,6 +16,7 @@ async function setupPrisma({
 	projectPath,
 	orm,
 	database,
+	authentication,
 	prismasrcpath,
 }: PrismaOptions) {
 	const spinner = ora();
@@ -52,6 +54,18 @@ async function setupPrisma({
 				prisma: "^4.0.0",
 				"@prisma/client": "^4.0.0",
 			};
+			if (authentication === "NextAuth") {
+				packageJson.dependencies = {
+					...packageJson.dependencies,
+					"next-auth": "4.24.10",
+					bcrypt: "5.1.0",
+				};
+
+				packageJson.devDependencies = {
+					...packageJson.devDependencies,
+					"@types/bcrypt": "5.0.0",
+				};
+			}
 			await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
 			spinner.succeed(
 				chalk.green("Updated package.json with Prisma dependencies.")

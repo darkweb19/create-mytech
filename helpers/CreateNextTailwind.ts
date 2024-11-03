@@ -15,15 +15,14 @@ async function createNextTailwindBoilerplate(
 	const { orm, database, authentication, frontendLanguage } = options;
 	const spinner = ora();
 
-	// const templatePath = path.join("templates/next-tailwind");
-
-	// await fs.ensureDir(templatePath);
-
 	spinner.start(
 		"Setting up Next.js + Tailwind CSS project from template files..."
 	);
 
-	!fs.copySync(path.join(PKG_ROOT, "templates/next-tailwind"), projectPath);
+	await fs.copySync(
+		path.join(PKG_ROOT, "templates/next-tailwind"),
+		projectPath
+	);
 	spinner.succeed(chalk.green("Template files copied."));
 
 	// Prompt for dependency installation
@@ -41,6 +40,7 @@ async function createNextTailwindBoilerplate(
 			projectPath,
 			orm,
 			database,
+			authentication,
 			prismasrcpath: "hard-coded.prisma",
 		});
 	}
@@ -50,8 +50,13 @@ async function createNextTailwindBoilerplate(
 			projectPath,
 			orm,
 			database,
+			authentication,
 			prismasrcpath: "next-auth.prisma",
 		});
+
+		spinner.succeed(
+			chalk.green("Updated package.json with Prisma dependencies.")
+		);
 	}
 
 	if (installDeps) {
