@@ -19,11 +19,56 @@ async function createNextTailwindBoilerplate(
 		"Setting up Next.js + Tailwind CSS project from template files..."
 	);
 
-	await fs.copySync(
-		path.join(PKG_ROOT, "templates/next-tailwind"),
-		projectPath
+	if (authentication === "NextAuth") {
+		await fs.copySync(
+			path.join(PKG_ROOT, "templates/next-tailwind"),
+			projectPath
+		);
+
+		await fs.remove(path.join(projectPath, "app"));
+
+		await fs.copySync(
+			path.join(PKG_ROOT, "templates/extras/app-with-auth"),
+			projectPath
+		);
+
+		chalk.green("Template files copied with NextAuth.");
+
+		{
+			orm === "Prisma" &&
+				setupPrisma({
+					projectPath,
+					orm,
+					database,
+					authentication,
+					prismasrcpath: "next-auth.prisma",
+				});
+		}
+	} else if (authentication === "Hard-coded") {
+		await fs.copySync(
+			path.join(PKG_ROOT, "templates/next-tailwind"),
+			projectPath
+		);
+
+		{
+			orm === "Prisma" &&
+				setupPrisma({
+					projectPath,
+					orm,
+					database,
+					authentication,
+					prismasrcpath: "hard-coded.prisma",
+				});
+		}
+
+		spinner.succeed(
+			chalk.green("Template files copied with Hard-Coded Authentication.")
+		);
+	}
+
+	spinner.succeed(
+		chalk.green("Updated package.json with Prisma dependencies.")
 	);
-	spinner.succeed(chalk.green("Template files copied."));
 
 	// Prompt for dependency installation
 	const { installDeps } = await inquirer.prompt([
@@ -34,30 +79,6 @@ async function createNextTailwindBoilerplate(
 			default: true,
 		},
 	]);
-
-	if (authentication === "Hard-coded" && orm === "Prisma") {
-		setupPrisma({
-			projectPath,
-			orm,
-			database,
-			authentication,
-			prismasrcpath: "hard-coded.prisma",
-		});
-	}
-
-	if (authentication === "NextAuth" && orm === "Prisma") {
-		setupPrisma({
-			projectPath,
-			orm,
-			database,
-			authentication,
-			prismasrcpath: "next-auth.prisma",
-		});
-
-		spinner.succeed(
-			chalk.green("Updated package.json with Prisma dependencies.")
-		);
-	}
 
 	if (installDeps) {
 		spinner.start("Installing dependencies...");
