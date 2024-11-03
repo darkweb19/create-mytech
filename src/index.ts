@@ -12,7 +12,7 @@ export interface ProjectOptions {
 	frontendFramework: "React" | "Next.js" | "Remix";
 	frontendLanguage: "JavaScript" | "TypeScript";
 	orm: "Prisma" | "Drizzle";
-	database: "PostgreSQL" | "MySQL" | "PlanetScale";
+	database: "PostgreSQL" | "MySQL";
 	authentication: "Hard-coded" | "NextAuth" | "Lucia Auth";
 }
 
@@ -52,12 +52,6 @@ async function init() {
 		},
 		{
 			type: "list",
-			name: "backendFramework",
-			message: "Select a backend framework:",
-			choices: ["Node.js with Express"],
-		},
-		{
-			type: "list",
 			name: "orm",
 			message: "Choose an ORM for database interaction:",
 			choices: ["Prisma", "Drizzle"],
@@ -66,7 +60,7 @@ async function init() {
 			type: "list",
 			name: "database",
 			message: "Select a database:",
-			choices: ["PostgreSQL", "MySQL", "PlanetScale"],
+			choices: ["PostgreSQL", "MySQL"],
 		},
 		{
 			type: "list",

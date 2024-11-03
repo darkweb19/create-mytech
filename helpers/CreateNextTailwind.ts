@@ -23,7 +23,7 @@ async function createNextTailwindBoilerplate(
 		"Setting up Next.js + Tailwind CSS project from template files..."
 	);
 
-	fs.copySync(path.join(PKG_ROOT, "templates/next-tailwind"), projectPath);
+	!fs.copySync(path.join(PKG_ROOT, "templates/next-tailwind"), projectPath);
 	spinner.succeed(chalk.green("Template files copied."));
 
 	// Prompt for dependency installation
@@ -36,13 +36,23 @@ async function createNextTailwindBoilerplate(
 		},
 	]);
 
-	// if (authentication === "Hard-coded") {
-	// 	setupPrisma(projectPath, orm, database, "hard-coded.prisma");
-	// }
+	if (authentication === "Hard-coded" && orm === "Prisma") {
+		setupPrisma({
+			projectPath,
+			orm,
+			database,
+			prismasrcpath: "hard-coded.prisma",
+		});
+	}
 
-	// if (authentication === "NextAuth") {
-	// 	setupPrisma(projectPath, orm, database, "next-auth.prisma");
-	// }
+	if (authentication === "NextAuth" && orm === "Prisma") {
+		setupPrisma({
+			projectPath,
+			orm,
+			database,
+			prismasrcpath: "next-auth.prisma",
+		});
+	}
 
 	if (installDeps) {
 		spinner.start("Installing dependencies...");

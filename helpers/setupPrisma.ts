@@ -2,38 +2,46 @@ import fs from "fs-extra";
 import path from "path";
 import ora from "ora";
 import chalk from "chalk";
+import { PKG_ROOT } from "../consts";
 
-async function setupPrisma(
-	projectPath: string,
-	orm: string,
-	database: string,
-	prismasrcpath: string
-) {
+export interface PrismaOptions {
+	projectPath: string;
+	orm: "Prisma" | "Drizzle";
+	database: "PostgreSQL" | "MySQL";
+	prismasrcpath: string;
+}
+
+async function setupPrisma({
+	projectPath,
+	orm,
+	database,
+	prismasrcpath,
+}: PrismaOptions) {
 	const spinner = ora();
 
 	// Check if Prisma should be installed based on the options
-	if (orm === "Prisma" && database === "PostgreSQL") {
+	if (orm === "Prisma") {
 		spinner.start("Setting up Prisma...");
 
-		// Define paths for the Prisma schema and package.json
 		const prismaSchemaSrcPath = path.join(
-			"templates",
-			"extras",
-			"prisma",
-			"schema",
+			PKG_ROOT,
+			"templates/extras/prisma/schema",
 			prismasrcpath
-		);
-		const prismaSchemaDestPath = path.join(
-			projectPath,
-			"prisma",
-			"schema.prisma"
 		);
 
 		const packageJsonPath = path.join(projectPath, "package.json");
+		//changing the database according to provider
+		let prismaSchema = await fs.readFileSync(prismaSchemaSrcPath, "utf-8");
 
-		// Ensure the prisma directory exists and copy the schema file
-		await fs.ensureDir(path.dirname(prismaSchemaDestPath));
-		await fs.copyFile(prismaSchemaSrcPath, prismaSchemaDestPath);
+		prismaSchema = prismaSchema.replace(
+			'provider = "postgresql"',
+			`provider = "${database === "MySQL" ? "mysql" : "postgresql"}"`
+		);
+
+		const schemaDest = path.join(projectPath, "prisma/schema.prisma");
+		fs.mkdirSync(path.dirname(schemaDest), { recursive: true });
+		fs.writeFileSync(schemaDest, prismaSchema);
+
 		spinner.succeed(chalk.green("Prisma schema file copied."));
 
 		// Update package.json with Prisma dependencies
