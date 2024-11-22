@@ -4,7 +4,7 @@ import ora from "ora";
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { execSync } from "child_process";
-import { ProjectOptions } from "../src";
+import { ProjectOptions } from "../types";
 import { setupPrisma } from "./setupPrisma";
 import { PKG_ROOT } from "../consts";
 
