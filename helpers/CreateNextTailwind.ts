@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import path from "path";
 import ora from "ora";
-import inquirer from "inquirer";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import { ProjectOptions } from "../types";
@@ -12,7 +11,8 @@ async function createNextTailwindBoilerplate(
 	projectPath: string,
 	options: ProjectOptions
 ) {
-	const { orm, database, authentication, frontendLanguage } = options;
+	const { orm, database, authentication, frontendLanguage, installDeps } =
+		options;
 	const spinner = ora();
 
 	spinner.start(
@@ -69,16 +69,6 @@ async function createNextTailwindBoilerplate(
 	spinner.succeed(
 		chalk.green("Updated package.json with Prisma dependencies.")
 	);
-
-	// Prompt for dependency installation
-	const { installDeps } = await inquirer.prompt([
-		{
-			type: "confirm",
-			name: "installDeps",
-			message: "Do you want to install the dependencies now?",
-			default: true,
-		},
-	]);
 
 	if (installDeps) {
 		spinner.start("Installing dependencies...");

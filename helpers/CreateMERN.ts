@@ -1,11 +1,15 @@
 import fs from "fs-extra";
 import path from "path";
 import ora from "ora";
-import inquirer from "inquirer";
 import { execSync } from "child_process";
 import chalk from "chalk";
+import { ProjectOptions } from "../types";
 
-async function createMERNBoilerplate(projectPath: string) {
+async function createMERNBoilerplate(
+	projectPath: string,
+	answers: ProjectOptions
+) {
+	const { installDeps } = answers;
 	const spinner = ora();
 
 	const serverPath = path.join(projectPath, "server");
@@ -31,15 +35,6 @@ async function createMERNBoilerplate(projectPath: string) {
 	spinner.start("Creating React frontend files...");
 	await createReactFiles(srcPath);
 	spinner.succeed(chalk.green("React frontend files created"));
-
-	const { installDeps } = await inquirer.prompt([
-		{
-			type: "confirm",
-			name: "installDeps",
-			message: "Do you want to install the dependencies now?",
-			default: true,
-		},
-	]);
 
 	if (installDeps) {
 		spinner.start("Installing backend dependencies...");

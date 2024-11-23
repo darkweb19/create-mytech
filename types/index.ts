@@ -5,4 +5,5 @@ export interface ProjectOptions {
 	orm: "Prisma" | "Drizzle";
 	database: "PostgreSQL" | "MySQL";
 	authentication: "Hard-coded" | "NextAuth" | "Lucia Auth";
+	installDeps: boolean;
 }
