@@ -11,78 +11,146 @@ async function createNextTailwindBoilerplate(
 	projectPath: string,
 	options: ProjectOptions
 ) {
-	const { orm, database, authentication, frontendLanguage, installDeps } =
-		options;
+	const { orm, database, authentication, installDeps } = options;
 	const spinner = ora();
 
-	spinner.start(
-		"Setting up Next.js + Tailwind CSS project from template files..."
-	);
+	// Configuration for different authentication types
+	const authConfig = {
+		NextAuth: {
+			templatePath: "templates/extras/app-with-auth",
+			prismasrcpath: "next-auth.prisma",
+			message: "Template files copied with NextAuth.",
+		},
+		"Hard-coded": {
+			templatePath: "templates/extras/app-with-hard-coded", // No extra template for hard-coded auth
+			prismasrcpath: "hard-coded.prisma",
+			message: "Template files copied with Hard-Coded Authentication.",
+		},
+		None: {
+			templatePath: null, // No additional template required
+			prismasrcpath: null,
+			message: "Template files copied with No Authentication.",
+		},
+	};
 
-	if (authentication === "NextAuth") {
+	try {
+		// Start spinner
+		spinner.start(
+			"Setting up Next.js + Tailwind CSS project from template files..."
+		);
+
+		// Base template copy
 		await fs.copySync(
 			path.join(PKG_ROOT, "templates/next-tailwind"),
 			projectPath
 		);
 
-		await fs.remove(path.join(projectPath, "app"));
-
-		await fs.copySync(
-			path.join(PKG_ROOT, "templates/extras/app-with-auth"),
-			projectPath
-		);
-
-		chalk.green("Template files copied with NextAuth.");
-
-		{
-			orm === "Prisma" &&
-				setupPrisma({
-					projectPath,
-					orm,
-					database,
-					authentication,
-					prismasrcpath: "next-auth.prisma",
-				});
-		}
-	} else if (authentication === "Hard-coded") {
-		await fs.copySync(
-			path.join(PKG_ROOT, "templates/next-tailwind"),
-			projectPath
-		);
-
-		{
-			orm === "Prisma" &&
-				setupPrisma({
-					projectPath,
-					orm,
-					database,
-					authentication,
-					prismasrcpath: "hard-coded.prisma",
-				});
+		// Get the authentication configuration
+		const auth = authConfig[authentication];
+		if (!auth) {
+			throw new Error(
+				`Unsupported authentication type: ${authentication}`
+			);
 		}
 
-		spinner.succeed(
-			chalk.green("Template files copied with Hard-Coded Authentication.")
-		);
-	}
+		// Additional template for authentication, if applicable
+		if (auth.templatePath) {
+			if (authentication === "NextAuth") {
+				const packageJsonPath = path.join(projectPath, "package.json");
+				const packageJson = await fs.readJson(packageJsonPath);
 
-	spinner.succeed(
-		chalk.green("Updated package.json with Prisma dependencies.")
-	);
+				packageJson.dependencies = {
+					...packageJson.dependencies,
+					"next-auth": "4.24.10",
+					bcrypt: "5.1.0",
+				};
+				packageJson.devDependencies = {
+					...packageJson.devDependencies,
+					"@types/bcrypt": "5.0.0",
+				};
 
-	if (installDeps) {
-		spinner.start("Installing dependencies...");
-		execSync("npm install", { cwd: projectPath, stdio: "inherit" });
-		spinner.succeed(chalk.green("Dependencies installed."));
-	} else {
+				await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+			}
+
+			if (authentication === "Hard-coded") {
+				const packageJsonPath = path.join(projectPath, "package.json");
+				const packageJson = await fs.readJson(packageJsonPath);
+
+				packageJson.dependencies = {
+					...packageJson.dependencies,
+					bcryptjs: "^2.4.3",
+					"@nextui-org/react": "^2.2.10",
+					"@radix-ui/react-avatar": "^1.0.4",
+					"@radix-ui/react-dialog": "^1.0.5",
+					"@radix-ui/react-dropdown-menu": "^2.0.6",
+					"@radix-ui/react-label": "^2.0.2",
+					"@radix-ui/react-scroll-area": "^1.0.5",
+					"@radix-ui/react-slot": "^1.0.2",
+					axios: "^1.6.8",
+					"react-hot-toast": "^2.4.1",
+					"tailwindcss-animate": "^1.0.7",
+					"class-variance-authority": "^0.7.0",
+					"framer-motion": "^11.0.22",
+					jsonwebtoken: "^9.0.2",
+					"lucide-react": "^0.365.0",
+					nodemailer: "^6.9.12",
+				};
+				packageJson.devDependencies = {
+					...packageJson.devDependencies,
+					"@types/jsonwebtoken": "^9.0.6",
+				};
+
+				await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+			}
+
+			await fs.copySync(
+				path.join(PKG_ROOT, auth.templatePath),
+				projectPath
+			);
+		}
+
+		// Prisma setup if ORM is Prisma and authentication is configured
+		if (orm === "Prisma" && auth.prismasrcpath) {
+			if (database === "None") {
+				console.log(
+					chalk.red(
+						"Prisma requires a valid database. So the default is selected."
+					)
+				);
+			}
+
+			await setupPrisma({
+				projectPath,
+				orm,
+				database,
+				authentication,
+				prismasrcpath: auth.prismasrcpath,
+			});
+		}
+
+		// Success message for authentication type
+		spinner.succeed(chalk.green(auth.message));
+
+		// Install dependencies if the flag is set
+		if (installDeps) {
+			spinner.start("Installing dependencies...");
+			execSync("npm install", { cwd: projectPath, stdio: "inherit" });
+			spinner.succeed(chalk.green("Dependencies installed."));
+		} else {
+			console.log(
+				chalk.bgYellowBright(
+					"You can install dependencies later by running 'npm install' inside the project directory."
+				)
+			);
+		}
+
 		console.log(
-			"You can install dependencies later by running 'npm install' inside the 'app' directory."
+			chalk.green("Next.js with Tailwind CSS boilerplate setup complete!")
 		);
+	} catch (error) {
+		spinner.fail(chalk.red("An error occurred during the setup process."));
+		console.error(error.message);
 	}
-
-	console.log(
-		chalk.green("Next.js with Tailwind CSS boilerplate setup complete!")
-	);
 }
 
 export { createNextTailwindBoilerplate };

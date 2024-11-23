@@ -43,6 +43,8 @@ async function createProject(answers: ProjectOptions) {
 			`Project ${answers.projectName} created with ${answers.frontendFramework} frontend and backend!`
 		)
 	);
+
+	//! Log next step is required
 }
 
 init();

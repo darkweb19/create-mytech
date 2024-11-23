@@ -6,9 +6,9 @@ import { PKG_ROOT } from "../consts";
 
 export interface PrismaOptions {
 	projectPath: string;
-	orm: "Prisma" | "Drizzle";
-	database: "PostgreSQL" | "MySQL";
-	authentication: "Hard-coded" | "NextAuth" | "Lucia Auth";
+	orm: "None" | "Prisma" | "Drizzle";
+	database: "None" | "PostgreSQL" | "MySQL";
+	authentication: "None" | "Hard-coded" | "NextAuth" | "Lucia Auth";
 	prismasrcpath: string;
 }
 
