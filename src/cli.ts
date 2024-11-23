@@ -71,8 +71,6 @@ export const cli = async (): Promise<ProjectOptions> => {
 
 	const options = program.opts();
 
-	console.log("options", options);
-
 	const questions: any = [];
 
 	if (!projectNameArg) {
