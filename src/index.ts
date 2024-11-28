@@ -7,6 +7,8 @@ import { createMERNBoilerplate } from "../helpers/CreateMERN";
 import { createNextTailwindBoilerplate } from "../helpers/CreateNextTailwind";
 import { ProjectOptions } from "../types";
 import { cli } from "./cli";
+import { logger } from "../utils/logger";
+import { title_text_ASCII } from "../consts";
 
 // Create an object that maps frontend frameworks to their respective setup functions
 const setupFunctions: Record<
@@ -22,7 +24,7 @@ const setupFunctions: Record<
 };
 
 async function init() {
-	console.log(chalk.green("Welcome to My Stack Generator!"));
+	logger.info(title_text_ASCII);
 
 	// Parse command-line arguments
 	const finalAnswers = await cli();
@@ -38,13 +40,10 @@ async function createProject(answers: ProjectOptions) {
 	const setupFunction = setupFunctions[answers.frontendFramework];
 	await setupFunction(projectPath, answers);
 
-	console.log(
-		chalk.green(
-			`Project ${answers.projectName} created with ${answers.frontendFramework} frontend and backend!`
-		)
-	);
+	logger.info(`Successfully created your project at ${projectPath}`);
 
 	//! Log next step is required
+	logger.info("Next Steps:");
 }
 
 init();

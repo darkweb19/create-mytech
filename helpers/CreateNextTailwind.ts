@@ -7,6 +7,7 @@ import { ProjectOptions } from "../types";
 import { setupPrisma } from "./setupPrisma";
 import { PKG_ROOT } from "../consts";
 import { writePackageJSON } from "./writePackageJSON";
+import { logger } from "../utils/logger";
 
 async function createNextTailwindBoilerplate(
 	projectPath: string,
@@ -20,25 +21,24 @@ async function createNextTailwindBoilerplate(
 		NextAuth: {
 			templatePath: "templates/extras/app-with-auth",
 			prismasrcpath: "next-auth.prisma",
-			message: "Template files copied with NextAuth.",
+			message: "Successfully setup boilerplate for NextAuth.",
 		},
 		"Hard-coded": {
 			templatePath: "templates/extras/app-with-hard-coded",
 			prismasrcpath: "hard-coded.prisma",
-			message: "Template files copied with Hard-Coded Authentication.",
+			message:
+				"Successfully setup boilerplate with Hard-Coded Authentication.",
 		},
 		None: {
 			templatePath: "templates/next-tailwind",
 			prismasrcpath: "base.prisma",
-			message: "Template files copied with No Authentication.",
+			message: "Successfully scaffolded without authentication.",
 		},
 	};
 
 	try {
 		// Start spinner
-		spinner.start(
-			"Setting up Next.js + Tailwind CSS project from template files..."
-		);
+		spinner.start("Setting up your project .......");
 
 		// Base template copy
 		await fs.copySync(
@@ -100,10 +100,8 @@ async function createNextTailwindBoilerplate(
 		// Prisma setup if ORM is Prisma and authentication is configured
 		if (orm === "Prisma" && auth.prismasrcpath) {
 			if (database === "None") {
-				console.log(
-					chalk.red(
-						"Prisma requires a valid database. So the default is selected."
-					)
+				logger.warn(
+					"Prisma requires a database so selecting PostgreSQL as default."
 				);
 			}
 

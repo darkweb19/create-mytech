@@ -44,7 +44,9 @@ async function setupPrisma({
 		fs.mkdirSync(path.dirname(schemaDest), { recursive: true });
 		fs.writeFileSync(schemaDest, prismaSchema);
 
-		spinner.succeed(chalk.green("Prisma schema file copied."));
+		spinner.succeed(
+			chalk.green("Successfully copied Prisma Schema Files.")
+		);
 
 		// Update package.json with Prisma dependencies
 		try {
@@ -67,9 +69,6 @@ async function setupPrisma({
 				};
 			}
 			await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
-			spinner.succeed(
-				chalk.green("Updated package.json with Prisma dependencies.")
-			);
 		} catch (error) {
 			spinner.fail(
 				chalk.red(
@@ -80,7 +79,9 @@ async function setupPrisma({
 			return;
 		}
 
-		spinner.succeed(chalk.green("Prisma setup complete."));
+		spinner.succeed(
+			chalk.green(`Successfully setup ${database} database service.`)
+		);
 	} else {
 		console.log(
 			chalk.yellow("Prisma setup skipped based on selected options.")
