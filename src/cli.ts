@@ -15,12 +15,12 @@ const default_for_cli = {
 	installDeps: false,
 };
 
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: ProjectOptions = {
 	projectName: "default-project",
-	frontendFramework: "None",
-	frontendLanguage: "None",
-	orm: "None",
-	database: "None",
+	frontendFramework: "Next.js",
+	frontendLanguage: "TypeScript",
+	orm: "Prisma",
+	database: "PostgreSQL",
 	authentication: "None",
 	installDeps: true,
 };
@@ -98,7 +98,7 @@ export const cli = async (): Promise<ProjectOptions> => {
 			type: "list",
 			name: "frontendLanguage",
 			message: "Choose language for frontend:",
-			choices: ["JavaScript", "TypeScript"],
+			choices: ["TypeScript", "JavaScript"],
 			default: DEFAULT_OPTIONS.frontendLanguage,
 		});
 	}
