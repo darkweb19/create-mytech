@@ -16,9 +16,6 @@
   "license": "MIT",
   "author": "Sujan Shrestha",
   "type": "module",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "exports": "./dist/index.js",
   "bin": {
     "create-mytech": "./dist/index.js"
