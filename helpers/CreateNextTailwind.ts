@@ -22,7 +22,7 @@ async function createNextTailwindBoilerplate(
 			message: "Template files copied with NextAuth.",
 		},
 		"Hard-coded": {
-			templatePath: "templates/extras/app-with-hard-coded", // No extra template for hard-coded auth
+			templatePath: "templates/extras/app-with-hard-coded",
 			prismasrcpath: "hard-coded.prisma",
 			message: "Template files copied with Hard-Coded Authentication.",
 		},
@@ -53,7 +53,7 @@ async function createNextTailwindBoilerplate(
 			);
 		}
 
-		// Additional template for authentication, if applicable
+		// this is for package.json setup
 		if (auth.templatePath) {
 			if (authentication === "NextAuth") {
 				const packageJsonPath = path.join(projectPath, "package.json");
@@ -107,6 +107,8 @@ async function createNextTailwindBoilerplate(
 				path.join(PKG_ROOT, auth.templatePath),
 				projectPath
 			);
+			// Success message for authentication type
+			spinner.succeed(chalk.green(auth.message));
 		}
 
 		// Prisma setup if ORM is Prisma and authentication is configured
@@ -127,9 +129,6 @@ async function createNextTailwindBoilerplate(
 				prismasrcpath: auth.prismasrcpath,
 			});
 		}
-
-		// Success message for authentication type
-		spinner.succeed(chalk.green(auth.message));
 
 		// Install dependencies if the flag is set
 		if (installDeps) {
