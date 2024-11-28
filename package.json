@@ -11,12 +11,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/darkweb19/create-mytech",
-    "directory": "cli"
+    "url": "https://github.com/darkweb19/create-mytech"
   },
   "license": "MIT",
   "author": "Sujan Shrestha",
   "type": "module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "exports": "./dist/index.js",
   "bin": {
     "create-mytech": "./dist/index.js"
